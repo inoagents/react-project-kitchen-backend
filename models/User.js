@@ -60,10 +60,8 @@ UserSchema.methods.toProfileJSONFor = function(user){
 
 UserSchema.methods.favorite = function(id){
   const user = this;
-  if (user.favorites.length === 0) {
-    user.favorites = [id];
-  } else if(user.favorites.indexOf(id) === -1){
-    user.favorites.concat([id]);
+  if(user.favorites.indexOf(id) === -1){
+    user.favorites = user.favorites.concat([id]);
   }
 
   return user.save();
@@ -85,7 +83,7 @@ UserSchema.methods.follow = function(id){
   if (user.following.length === 0) {
     user.following = [id];
   } else if(user.following.indexOf(id) === -1){
-    user.following.concat([id]);
+    user.following = user.following.concat([id]);
   }
 
   return user.save();
