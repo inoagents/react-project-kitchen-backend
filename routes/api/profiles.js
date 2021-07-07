@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
+var Article = mongoose.model('Article');
 var auth = require('../auth');
 
 // Preload user profile on routes with ':username'
@@ -24,6 +25,16 @@ router.get('/:username', auth.optional, function(req, res, next){
   } else {
     return res.json({profile: req.profile.toProfileJSONFor(false)});
   }
+});
+
+router.get('/:username/tags', auth.optional, function (req, res, next) {
+  var profileId = req.profile._id;
+  var query = {
+    author: profileId
+  }
+  Article.find(query).distinct('tagList').then(function(tags){
+    return res.json({tags: tags});
+  }).catch(next);
 });
 
 router.post('/:username/follow', auth.required, function(req, res, next){
