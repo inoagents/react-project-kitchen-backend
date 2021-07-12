@@ -237,7 +237,7 @@ router.get('/:article/comments', auth.optional, function(req, res, next){
         }
       }
     }).execPopulate().then(function(article) {
-      return res.json({comments: req.article.comments.map(function(comment){
+      return res.json({comments: article.comments.map(function(comment){
         return comment.toJSONFor(user);
       })});
     });
@@ -249,15 +249,12 @@ router.post('/:article/comments', auth.required, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if(!user){ return res.sendStatus(401); }
 
-    var comment = new Comment(req.body.comment);
-    comment.article = req.article;
-    comment.author = user;
+    var newComment = new Comment(req.body.comment);
+    newComment.article = req.article;
+    newComment.author = user;
 
-    return comment.save().then(function(){
-      // push operation no longer supports
-      req.article.comments.concat([comment]);
-
-      return req.article.save().then(function(article) {
+    return newComment.save().then(function(comment){
+      return req.article.addComment(comment._id).then(function() {
         res.json({comment: comment.toJSONFor(user)});
       });
     });
