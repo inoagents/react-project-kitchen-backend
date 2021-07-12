@@ -53,7 +53,7 @@ UserSchema.methods.toProfileJSONFor = function(user){
   return {
     username: this.username,
     bio: this.bio,
-    image: this.image || '/public/alien_avatar.png',
+    image: this.image || 'https://24articles.ru/public/alien_avatar.png',
     following: user ? user.isFollowing(this._id) : false
   };
 };
